@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사진 촬영 페이지</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  #photoCaption, #detectionResults {
+    margin-top: 20px;
+  }
+  #camera, #detectionResults {
+    display: none;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<input type="file" id="camera" name="camera" capture="camera" accept="image/*"/>
+<img id="pic" class="hidden" />
+<div id="photoCaption" class="hidden">사진 미리보기</div>
+<div id="dataContainer"></div>
+<br><br><br><br><br><br><br><br>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+  let touchStart = 0;
+  let lastTouchTime = 0;
+  let touchCount = 0;
+  const realHeight = 1.7; // 객체의 실제 높이 예시 (예: 사람의 평균 높이)
+  const focalLength = 4.25; // 카메라의 초점 거리 (mm)
+
+  function calculateDistance(imageHeight) {
+    return (focalLength * realHeight) / imageHeight;
+  }
+  function handleTouchEnd() {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTouchTime;
+    const longPressDuration = currentTime - touchStart;
+
+    if (tapLength < 600 && touchCount > 0) {
+      touchCount = 0;
+    } else {
+      touchCount++;
+      setTimeout(function() {
+        if (touchCount == 1) {
+          speakText("사진 촬영 중");
+          $('#camera').click();
+        }
+        touchCount = 0;
+      }, 600);
+    }
+
+    lastTouchTime = currentTime;
+    if (longPressDuration >= 800) {
+      window.location.href = '/';
+    }
+  }
+
+  function handleTouchStart() {
+    touchStart = new Date().getTime();
+  }
+
+  $('body').on('touchstart', handleTouchStart);
+  $('body').on('touchend', handleTouchEnd);
+
+  $('#camera').on('change', function(e){
+    const files = e.target.files;
+    if(files.length > 0) {
+      const file = files[0];
+      const formData = new FormData();
+      $('#pic').attr('src', URL.createObjectURL(file)).removeClass('hidden');
+      $('#photoCaption').text("촬영완료").removeClass('hidden');
+      speakText("촬영완료");
+      formData.append('image', file);
+
+      // 서버에 이미지 업로드
+      $.ajax({
+        url: '/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+          $('#pic').attr('src', data.esrganImageUrl).removeClass('hidden'); // 처리된 이미지 표시
+          $('#photoCaption').text("처리 완료된 이미지").removeClass('hidden');
+          speakText("처리 완료");
+
+          console.log('Server response:', data);
+          fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('dataContainer');
+                data.forEach(obj => {
+                  const imageHeight = obj.bbox[3] - obj.bbox[1]; // 이미지에서의 객체 높이 계산
+                  const distance = calculateDistance(imageHeight).toFixed(2);
+                  const content = `<p>Label: ${obj.label}, Confidence: ${obj.confidence}, Distance: ${distance}m </p>`;
+                    container.innerHTML += content;
+                });
+                speakText(container.innerHTML); // 모든 설명을 음성으로 출력
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        },
+        error: function() {
+          alert('이미지 처리에 실패했습니다.');
+          speakText("처리 실패");
+        }
+      });
+
+    }
+  });
+
+  function speakText(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(msg);
+  }
+});
+</script>
+
+</body>
+</html>

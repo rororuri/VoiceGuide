@@ -1,0 +1,22 @@
+[
+    {
+        "label": "person",
+        "confidence": "0.63",
+        "bbox": [
+            92,
+            12,
+            105,
+            56
+        ]
+    },
+    {
+        "label": "car",
+        "confidence": "0.42",
+        "bbox": [
+            140,
+            0,
+            178,
+            16
+        ]
+    }
+]

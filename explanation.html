@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>동작원리 및 평가지표</title>
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    
+  }
+  .step-container {
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+  .step-header {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .step-description {
+    font-size: 1em;
+    color: #666;
+    font-weight: bold;
+  }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+h1, h2 {
+  color: #333;
+  
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metrics-table th, .metrics-table td {
+  border: 3px solid #333;
+  padding: 8px;
+  text-align: left;
+}
+
+.metrics-table th {
+  background-color:skyblue;
+  color: #660000;
+}
+
+
+.image-container img {
+  min-width: 300px; /* 이미지의 최소 너비를 200픽셀로 설정 */
+  height: auto; /* 원본 비율을 유지하며 높이 자동 조절 */
+
+}
+
+/* 숫자 색상 변경 */
+.existing-model-value {
+  color: #F9B7B0; /* 기존 모델 숫자 색상 */
+}
+
+.proposed-model-value {
+  color: #102873 /* 제안된 모델 숫자 색상 */
+}
+.logo-container img {
+    width: 100px; /* 이미지의 너비를 200px로 고정 */
+    height: auto; /* 높이를 자동으로 설정하여 비율을 유지 */
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+  .logo-container{
+    max-width:100%;
+    height:auto;
+  }
+  .hidden {
+    display: none;
+}
+#photoCaption{
+  text-align: center;
+ }
+</style>
+<!--<div class="logo-container">
+  <a href="2.html">
+    <img id="myImage" src="logo.png" alt="로고">
+  </a>-->
+</head>
+<body>
+
+<div class="container">
+  <h1  id="title">동작원리</h1>
+  <div class="step-container">
+    <div class="step-header">Step 1: 카메라 촬영</div>
+    <div class="step-description">사용자가 핸드폰 카메라로 사진을 찍는다.</div>
+  </div>
+  
+  <div class="step-container">
+    <div class="step-header">Step 2: 화질개선</div>
+    <div class="step-description">제안된 ESRGAN 모델을 사용하여 이미지의 화질을 개선한다.<br>이 모델은 VGGNet 스타일의 Discriminator를 Inception 모듈과 Attention 메커니즘으로 강화하여 다양한 스케일의 이미지 특징을 더욱 효과적으로 학습하고 중요한 정보에 집중할 수 있도록 설계되었다.</div>
+  </div>
+  
+  <div class="step-container">
+    <div class="step-header">Step 3: 객체 인식</div>
+    <div class="step-description">Teachable Machine을 활용하여 학습된 모델을 기반으로 이미지 속 객체를 인식한다.<br>이를 통해 제품의 이름을 파악할 수 있다.</div>
+  </div>
+  
+  <div class="step-container">
+    <div class="step-header">Step 4: 음성 안내</div>
+    <div class="step-description">인식된 제품의 이름과 관련 정보를 음성으로 안내한다.<br>이를 통해 사용자에게 직관적이고 편리한 방법으로 정보를 제공한다.</div>
+  </div>
+
+  <div class="section">
+    <h2>제안된ESRGAN 평가지표</h2>
+    <p>모델의 성능을 정량적으로 평가하는 지표들이다. SSIM, PSNR, LPIPS, NIQE 등 다양한 성능 지표에서 보다 우수한 결과를 보인다.</p>
+    <div class="image-container">
+        <img src="평가지표2.png" alt="모델 평가지표">
+    </div>
+    <table class="metrics-table">
+        <tr>
+          <th>지표</th>
+          <th>기존 모델</th>
+          <th>제안된 모델</th>
+        </tr>
+        <tr>
+          <td>PSNR</td>
+          <td><span class="existing-model-value">27.95</span></td>
+          <td><span class="proposed-model-value">30.36</span></td>
+        </tr>
+        <tr>
+          <td>SSIM</td>
+          <td><span class="existing-model-value">0.87</span></td>
+          <td><span class="proposed-model-value">0.89</span></td>
+        </tr>
+        <tr>
+          <td>LPIPS</td>
+          <td><span class="existing-model-value">0.19</span></td>
+          <td><span class="proposed-model-value">0.14</span></td>
+        </tr>
+        <tr>
+          <td>NIQE</td>
+          <td><span class="existing-model-value">7.05</span></td>
+          <td><span class="proposed-model-value">5.85</span></td>
+        </tr>
+    </table>
+  </div>
+
+</div>
+<input type="file" id="camera" name="camera" capture="camera" accept="image/*" class="hidden" />
+<img id="pic" style="width:100%;" class="hidden" />
+<div id="photoCaption" class="hidden">제품이름</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+  let lastTouchTime = 0;
+  let touchCount = 0;
+  let touchStartTime = 0;  // 터치 시작 시간
+  let bodyTouchTime = 0;
+  let bodyTouchCount = 0;
+  let longPressThreshold = 800; // 긴 터치로 간주할 최소 시간 (밀리초)
+  // 긴 터치 감지를 위한 터치 시작 이벤트 핸들러
+  $('body').on('touchstart', function(e) {
+    touchStartTime = new Date().getTime(); // 현재 시간을 터치 시작 시간으로 설정
+  });
+  // 터치 종료 이벤트 핸들러
+  $('body').on('touchend', function(e) {
+    const touchEndTime = new Date().getTime();
+    const touchDuration = touchEndTime - touchStartTime;
+
+    if (touchDuration >= longPressThreshold) {
+      e.preventDefault(); // 기본 동작 방지
+      window.location.href = '/'; // 긴 터치가 감지되면 2.html로 이동
+      // 현재 진행 중인 모든 TTS 음성 합성 작업을 취소
+      window.speechSynthesis.cancel();
+    }
+  });
+  $('#pic').on('touchend', function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTouchTime;
+    touchCount++;
+    if(tapLength < 600 && tapLength > 0 && touchCount == 2){
+      // 더블 탭 감지됨, "결과사진" 안내
+      speakText("제품이름");
+      $('#photoCaption').removeClass('hidden'); // "결과사진" 텍스트 표시
+      touchCount = 0; // 터치 카운트 리셋
+      $('#photoCaption').removeClass('hidden').text("제품이름");
+    } else if(touchCount == 1) {
+      // 첫 번째 터치, "다시찍기" 안내 후 카메라 실행
+      setTimeout(function() {
+        if(touchCount == 1) {
+          speakText("사진촬영", true); // 두 번째 인자로 카메라 재실행 여부 전달
+          touchCount = 0; // 600ms 내에 두 번째 터치가 없으면 카운트 리셋
+          $('#photoCaption').removeClass('hidden').text("사진 미리보기");
+        }
+      }, 600);
+    }
+
+    lastTouchTime = currentTime;
+    // 기본 터치 이벤트를 방지하여 더블 탭 줌 등의 기본 동작을 막음
+    e.preventDefault();
+  });
+
+
+
+  $('#camera').change(function(e){
+    var files = e.target.files;
+    if(files.length > 0) {
+      var file = files[0];
+      // 현재 진행 중인 모든 TTS 음성 합성 작업을 취소
+      window.speechSynthesis.cancel();
+      $('#pic').attr('src', URL.createObjectURL(file)).removeClass('hidden');
+      speakText("촬영 완료.");
+      // 사진 촬영 후 설명 텍스트와 관련 요소를 숨김
+      $('.step-container, .section, #title').addClass('hidden');
+      $('#photoCaption').addClass('hidden'); // 사진 캡션 숨기기
+      $('#photoCaption').removeClass('hidden').text("사진 미리보기");
+    }
+});
+
+    // 사진 터치 이벤트와 동일한 로직을 'body'에도 적용
+    $('body').on('touchend', function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - bodyTouchTime;
+    bodyTouchCount++;
+
+    // 사진 이외의 영역을 터치한 경우의 로직
+    if (!$(e.target).is('#pic')) {
+      if(tapLength < 600 && tapLength > 0 && bodyTouchCount == 2){
+        // 더블 탭 감지됨, "제품이름" 안내
+        speakText("제품이름");
+        $('#photoCaption').removeClass('hidden'); // "제품이름" 텍스트 표시
+        bodyTouchCount = 0; // 터치 카운트 리셋
+      } else if(bodyTouchCount == 1) {
+        // 첫 번째 터치, 카메라 실행
+        setTimeout(function() {
+          if(bodyTouchCount == 1) {
+            $('#camera').click();
+            bodyTouchCount = 0; // 600ms 내에 두 번째 터치가 없으면 카운트 리셋
+          }
+        }, 600);
+      }
+    }
+    bodyTouchTime = currentTime;
+    e.preventDefault();
+  });
+  function speakText(text, triggerCamera = false) {
+    var msg = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(msg);
+    msg.onend = function(event) {
+      if (triggerCamera) {
+            // 음성 안내가 끝난 후 카메라를 자동으로 다시 실행합니다.
+            $('#camera').click();
+        }
+    };
+  }
+});
+ /* document.addEventListener('DOMContentLoaded', function() {
+    // 이미지에 터치 이벤트 리스너 추가
+    document.getElementById('myImage').addEventListener('touchend', function(e) {
+        e.preventDefault();
+        window.location.href = '2.html';
+        window.speechSynthesis.cancel();
+    });
+});*/
+</script>
+</body>
+</html>

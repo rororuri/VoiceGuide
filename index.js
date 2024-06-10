@@ -51,8 +51,8 @@ app.post('/upload', upload.single('image'), (req, res) => {
     const originalImageName = path.basename(originalImagePath);
     let esrganOptions = {
         mode: 'text',
-        pythonPath: process.env.PYTHON_PATH ||'C:\\Users\\ejr33\\anaconda3\\python.exe',
-        scriptPath: process.env.SCRIPT_PATH ||'C:\\Users\\ejr33\\OneDrive\\Desktop\\rororuri',
+        pythonPath: process.env.PYTHON_PATH || '/usr/bin/python3',
+        scriptPath: process.env.SCRIPT_PATH || '/path/to/scripts',
         args: [originalImagePath]
     };
 

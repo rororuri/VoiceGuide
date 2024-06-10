@@ -52,7 +52,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     let esrganOptions = {
         mode: 'text',
         pythonPath: 'C:\\Users\\ejr33\\anaconda3\\python.exe',
-        scriptPath: 'C:\\Users\\ejr33\\OneDrive\\Desktop\\senior',
+        scriptPath: 'C:\\Users\\ejr33\\OneDrive\\Desktop\\rororuri',
         args: [originalImagePath]
     };
 

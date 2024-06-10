@@ -52,7 +52,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     let esrganOptions = {
         mode: 'text',
         pythonPath: process.env.PYTHON_PATH || '/usr/bin/python3',
-        scriptPath: process.env.SCRIPT_PATH || '/path/to/scripts',
+        scriptPath: path.join(__dirname, 'scripts'),
         args: [originalImagePath]
     };
 

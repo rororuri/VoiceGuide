@@ -30,7 +30,7 @@ const app = express();
 
 // CORS 설정 추가
 app.use(cors({
-    origin: 'https://port-0-voiceguide-1lx9ob5qp.sel5.cloudtype.app', // 허용할 출처를 명시합니다.
+    origin: 'busy-catlee-voiceguide-50f90660.koyeb.app/', // 허용할 출처를 명시합니다.
     optionsSuccessStatus: 200 // 일부 브라우저는 204 상태를 문제로 인식하므로 200을 사용합니다.
 }));
 

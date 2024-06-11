@@ -5,6 +5,7 @@ const { PythonShell } = require('python-shell');
 const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('./config/config.json').development; // config.json에서 설정 로드
+const cors = require('cors'); // cors 패키지 추가
 const PORT = process.env.PORT || 3000;
 const sequelize = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
@@ -26,7 +27,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 const app = express();
-const port = 3000;
+
+// CORS 설정 추가
+app.use(cors({
+    origin: 'https://port-0-voiceguide-1lx9ob5qp.sel5.cloudtype.app', // 허용할 출처를 명시합니다.
+    optionsSuccessStatus: 200 // 일부 브라우저는 204 상태를 문제로 인식하므로 200을 사용합니다.
+}));
 
 app.use(express.static('public'));
 app.use('/detected', express.static('detected'));
@@ -89,7 +95,8 @@ app.post('/upload', upload.single('image'), (req, res) => {
             console.error('ESRGAN Error:', err);
             res.status(500).send('Error occurred while enhancing the image.');
         });
-        // JSON 데이터 요청 처리
+});
+// JSON 데이터 요청 처리
 app.get('/data', (req, res) => {
     const jsonPath = './detected/enhanced_image.json';  // JSON 파일 경로 설정
     fs.readFile(jsonPath, 'utf8', (err, data) => {
@@ -99,7 +106,6 @@ app.get('/data', (req, res) => {
         }
         res.json(JSON.parse(data));
     });
-});
 });
 // JSON 요청 본문을 파싱하기 위해 필요
 app.use(express.json());

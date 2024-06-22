@@ -44,7 +44,7 @@ app.get('/inquiry', (req, res) => {
 });
 // '시작하기' 버튼을 눌렀을 때 'start.html' 페이지로 이동
 app.get('/index', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'start.html'));
 });
 app.get('/explanation', (req, res) => {
     res.sendFile(path.join(__dirname, 'explanation.html'));

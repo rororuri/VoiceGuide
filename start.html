@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사진 촬영 페이지</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  #photoCaption, #detectionResults {
+    margin-top: 20px;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .hidden {
+    display: none;
+  }
+  #videoElement {
+    width: 256px;
+    height: 256px;
+  }
+  #videoContainer.hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="videoContainer">
+  <video id="videoElement" autoplay></video>
+</div>
+<img id="pic" class="hidden" />
+<div id="photoCaption" class="hidden">사진 미리보기</div>
+<div id="dataContainer"></div>
+
+<br><br><br><br><br><br><br><br>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+  let touchStart = 0;
+  let lastTouchTime = 0;
+  let touchCount = 0;
+  const realHeight = 1.7; // 객체의 실제 높이 예시 (예: 사람의 평균 높이)
+  const focalLength = 4.25; // 카메라의 초점 거리 (mm)
+
+  function calculateDistance(imageHeight) {
+    return (focalLength * realHeight) / imageHeight;
+  }
+
+  function handleTouchEnd() {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTouchTime;
+    const longPressDuration = currentTime - touchStart;
+
+    if (tapLength < 600 && touchCount > 0) {
+      touchCount = 0;
+    } else {
+      touchCount++;
+      setTimeout(function() {
+        if (touchCount == 1) {
+          speakText("사진 촬영 중");
+          takePhoto();
+        }
+        touchCount = 0;
+      }, 600);
+    }
+
+    lastTouchTime = currentTime;
+    if (longPressDuration >= 800) {
+      window.location.href = '/';
+    }
+  }
+
+  function handleTouchStart() {
+    touchStart = new Date().getTime();
+  }
+
+  $('body').on('touchstart', handleTouchStart);
+  $('body').on('touchend', handleTouchEnd);
+
+  // 카메라 스트림을 가져와 비디오 요소에 설정
+  const video = document.querySelector("#videoElement");
+
+  navigator.mediaDevices.getUserMedia({ 
+    video: { 
+      width: 256, 
+      height: 256,
+      facingMode: "environment" // 후면 카메라 사용
+    } 
+  })
+    .then(function(stream) {
+      video.srcObject = stream;
+    })
+    .catch(function(err) {
+      console.log("카메라 접근 실패: " + err);
+    });
+
+  function takePhoto() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL('image/png');
+    $('#pic').attr('src', dataUrl).removeClass('hidden');
+    $('#photoCaption').text("촬영완료").removeClass('hidden');
+    $('#videoContainer').addClass('hidden');
+    speakText("촬영완료");
+
+    // 서버에 이미지 업로드
+    fetch(dataUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const formData = new FormData();
+        formData.append('image', blob, 'photo.png');
+        return fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+      })
+      .then(response => response.json())
+      .then(data => {
+        $('#pic').attr('src', data.esrganImageUrl).removeClass('hidden'); // 처리된 이미지 표시
+        $('#photoCaption').text("처리 완료된 이미지").removeClass('hidden');
+        speakText("처리 완료");
+
+        console.log('Server response:', data);
+        fetch('/data')
+          .then(response => response.json())
+          .then(data => {
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+            let minDistance = Infinity;
+            let closestObject = null;
+
+            data.forEach(obj => {
+              const imageHeight = obj.bbox[3] - obj.bbox[1]; // 이미지에서의 객체 높이 계산
+              const distance = calculateDistance(imageHeight).toFixed(2);
+              if (distance < minDistance) {
+                minDistance = distance;
+                closestObject = obj;
+              }
+            });
+
+            if (closestObject) {
+              const confidencePercent = (closestObject.confidence * 100).toFixed(0);
+              const content = `Label: ${closestObject.label}, 신뢰도: ${confidencePercent}%, 거리: ${minDistance}m `;
+              container.innerHTML = `<p>${content}</p>`;
+              speakText(content); // 가장 가까운 객체의 설명만 음성으로 출력
+            }
+
+          })
+          .catch(error => console.error('Error fetching data:', error));
+      })
+      .catch(error => {
+        alert('이미지 처리에 실패했습니다.');
+        speakText("처리 실패");
+      });
+  }
+
+  function speakText(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(msg);
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반응형 버튼</title>
+<style>
+  .button-container {
+    text-align: center;
+  }
+  
+  .button {
+    border: none;
+    color: black; /* 글자색을 검정으로 변경하여 대비를 높임 */
+    padding: 60px 50px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 30px;
+    font-weight: bold; /* 글자를 굵게 */
+    margin: 40px;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .explanation-button {
+    color: #244062; /* 글씨 색상: 상단 RGB */
+    background-color: #F9B7B0; /* 배경 색상: 하단 RGB */
+  }
+  
+  .start-button {
+    color: #102873; /* 글씨 색상: 상단 RGB */
+    background-color: #FFD966; /* 배경 색상: 하단 RGB */
+  }
+  
+  .inquiry-button {
+    color: #660000; /* 글씨 색상: 상단 RGB */
+    background-color: #9FC5E8; /* 배경 색상: 하단 RGB */
+  }
+  
+  .model-description-button {
+    color: #1C1C1C; /* 글씨 색상: 상단 RGB */
+    background-color:#E34234; /* 배경 색상: 하단 RGB */
+  }
+  
+  
+  @media screen and (max-width: 600px) {
+  .button {
+    width: 100%;
+    padding: 35px 0; /* 상하 패딩 조정 */
+    margin: 20px 0; /* 상하 마진 조정, 좌우 마진은 제거 */
+    font-size: 32px; /* 필요하다면 글자 크기를 줄입니다. */
+  }
+}
+  .logo-container img {
+    width: 100px; /* 이미지의 너비를 200px로 고정 */
+    height: auto; /* 높이를 자동으로 설정하여 비율을 유지 */
+  }
+  .logo-container{
+    max-width:100%;
+    height:auto;
+  }
+</style>
+</head>
+<body>
+ <!--<div class="logo-container">
+  <a href="2.html">
+    <img id="myImage" src="logo.png" alt="로고">
+  </a>-->
+  </div>
+  <br> <br><br>
+<div class="button-container">
+  <a href="/explanation" class="button explanation-button" onclick="speakText(this)"
+  data-description="실행방법 스텝 1 카메라 촬영 사용자가 핸드폰 카메라로 사진을 찍는다. 스텝 2 화질개선 제안하는 ESRGAN 모델을 사용하여 이미지의 화질을 개선한다. 본 프로그램에서는 기존 ESRGAN의 판별자 구조에 Inception 모듈과 SE Block을 통합함으로써, 학습 과정 중 발생할 수 있는 광범위한 열화 현상을 억제하고, 결과적으로 더욱 세밀한 고화질 이미지로 화질을 개선할 수 있도록 성능을 향상시켰다.
+  스텝 3 객체 인식 YOLO를 활용하여 학습된 모델을 기반으로 이미지 속 객체를 인식한다.이를 통해 제품의 이름을 파악할 수 있다.
+  스텝 4 음성 안내 인식된 제품의 이름과 관련 정보를 음성으로 안내한다.이를 통해 사용자에게 직관적이고 편리한 방법으로 정보를 제공한다.
+  제안된ESRGAN 평가지표 모델의 성능을 정량적으로 평가하는 지표들이다. SSIM, PSNR, LPIPS, NIQE 등 다양한 성능 지표에서 보다 우수한 결과를 보인다. ">실행방법</a>
+  <br><br>
+  <a class="button start-button" href="/index" onclick="speakText(this)" data-description="시작하기">시작하기</a>
+  <br><br>
+  <a class="button inquiry-button" href="/inquiry" onclick="speakText(this)"
+  data-description="문의하기 화면을 터치하여 음성으로 이메일 주소와 문의 내용을 입력하세요. 입력이 완료되면 화면을 두 번 터치하여 전송하세요.">문의사항</a>
+</div>
+
+<script>
+function speakText(button) {
+  // Check if the button has a data-description attribute; if so, use that for the spoken text.
+  var text = button.getAttribute('data-description') || button.textContent;
+  var speechSynthesis = window.speechSynthesis;
+  var speechUtterance = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(speechUtterance);
+}
+</script>
+
+</body>
+</html>

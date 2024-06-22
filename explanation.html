@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>동작원리 및 평가지표</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    text-align: left;
+    padding: 20px;
+  }
+  .step-header {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .step-description {
+    font-size: 1em;
+    color: #666;
+    font-weight: bold;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .section {
+    margin-bottom: 40px;
+    font-weight: bold;
+  }
+  h1, h2 {
+    color: #333;
+  }
+  .metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .metrics-table th, .metrics-table td {
+    border: 3px solid #333;
+    padding: 8px;
+    text-align: left;
+  }
+  .metrics-table th {
+    background-color: skyblue;
+    color: #660000;
+  }
+  .image-container img {
+    min-width: 300px;
+    height: auto;
+  }
+  .existing-model-value {
+    color: #F9B7B0;
+  }
+  .proposed-model-value {
+    color: #102873;
+  }
+  .logo-container img {
+    width: 100px;
+    height: auto;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+  .logo-container {
+    max-width: 100%;
+    height: auto;
+  }
+  .hidden {
+    display: none;
+  }
+  #photoCaption {
+    text-align: center;
+    margin-top: 20px;
+  }
+  #videoElement {
+    width: 256px;
+    height: 256px;
+  }
+  #videoContainer.hidden {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="content">
+  <div class="container">
+    <h1 id="title">동작원리</h1>
+    <div class="step-container">
+      <div class="step-header">Step 1: 카메라 촬영</div>
+      <div class="step-description">사용자가 핸드폰 카메라로 사진을 찍는다.</div>
+    </div>
+    <div class="step-container">
+      <div class="step-header">Step 2: 화질개선</div>
+      <div class="step-description">제안하는 ESRGAN 모델을 사용하여 이미지의 화질을 개선한다. 본 프로그램에서는 기존 ESRGAN의 판별자 구조에 Inception 모듈과 SE Block을 통합함으로써, 학습 과정 중 발생할 수 있는 광범위한 열화 현상을 억제하고, 결과적으로 더욱 세밀한 고화질 이미지로 화질을 개선할 수 있도록 성능을 향상시켰다.</div>
+    </div>
+    <div class="step-container">
+      <div class="step-header">Step 3: 객체 인식</div>
+      <div class="step-description">YOLO를 활용하여 학습된 모델을 기반으로 이미지 속 객체를 인식한다.<br>이를 통해 제품의 이름을 파악할 수 있다.</div>
+    </div>
+    <div class="step-container">
+      <div class="step-header">Step 4: 음성 안내</div>
+      <div class="step-description">인식된 제품의 이름과 관련 정보를 음성으로 안내한다.<br>이를 통해 사용자에게 직관적이고 편리한 방법으로 정보를 제공한다.</div>
+    </div>
+    <div class="section">
+      <h2>제안하는 ESRGAN 평가지표</h2>
+      <p>모델의 성능을 정량적으로 평가하는 지표들이다. SSIM, PSNR, LPIPS, NIQE 등 다양한 성능 지표에서 보다 우수한 결과를 보인다.</p>
+      <div class="image-container">
+        <p>test image : R_tiger.png / input size 256<br>
+        PSNR: 30에 가깝거나 이상이면 좋음<br>
+        SSIM: 1에 가까울 수록 유사성 높음<br>
+        LPIPS: 값이 작을수록 좋음<br>
+        NIQE: 값이 작을수록 좋음<br></p>
+      </div>
+      <table class="metrics-table">
+        <tr>
+          <th>지표</th>
+          <th>기존 모델</th>
+          <th>제안하는 모델</th>
+        </tr>
+        <tr>
+          <td>PSNR</td>
+          <td><span class="existing-model-value">27.95</span></td>
+          <td><span class="proposed-model-value">30.36</span></td>
+        </tr>
+        <tr>
+          <td>SSIM</td>
+          <td><span class="existing-model-value">0.87</span></td>
+          <td><span class="proposed-model-value">0.89</span></td>
+        </tr>
+        <tr>
+          <td>LPIPS</td>
+          <td><span class="existing-model-value">0.19</span></td>
+          <td><span class="proposed-model-value">0.14</span></td>
+        </tr>
+        <tr>
+          <td>NIQE</td>
+          <td><span class="existing-model-value">7.05</span></td>
+          <td><span class="proposed-model-value">5.85</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+  let touchStart = 0;
+  let lastTouchTime = 0;
+  let touchCount = 0;
+  const realHeight = 1.7; // 객체의 실제 높이 예시 (예: 사람의 평균 높이)
+  const focalLength = 4.25; // 카메라의 초점 거리 (mm)
+
+  function calculateDistance(imageHeight) {
+    return (focalLength * realHeight) / imageHeight;
+  }
+
+  function handleTouchEnd() {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTouchTime;
+    const longPressDuration = currentTime - touchStart;
+
+    
+
+    lastTouchTime = currentTime;
+    if (longPressDuration >= 800) {
+      window.location.href = '/';
+      window.speechSynthesis.cancel();
+    }
+  }
+
+  function handleTouchStart() {
+    touchStart = new Date().getTime();
+  }
+
+  $('body').on('touchstart', handleTouchStart);
+  $('body').on('touchend', handleTouchEnd);
+
+})
+</script>
+
+</body>
+</html>
